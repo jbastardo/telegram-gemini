@@ -1,6 +1,7 @@
 import { Telegraf } from 'telegraf';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
+import express from 'express';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -54,8 +55,19 @@ bot.on('text', async (ctx) => {
 
 // Iniciar el bot
 bot.launch();
-
 console.log("Bot de Telegram iniciado exitosamente.");
+
+// Crear un servidor web básico para Coolify / Cloudflare Tunnel
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Telegram Bot (Gemini AI) is running!');
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor web escuchando en el puerto ${PORT}`);
+});
 
 // Habilitar el apagado elegante
 process.once('SIGINT', () => bot.stop('SIGINT'));
