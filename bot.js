@@ -41,10 +41,24 @@ bot.on('text', async (ctx) => {
   ctx.sendChatAction('typing');
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: userMessage,
-    });
+    let response;
+    const modelsToTry = ['gemini-3.1-flash', 'gemini-3.0-flash', 'gemini-2.5-flash', 'gemini-pro'];
+    let lastError;
+
+    for (const modelName of modelsToTry) {
+      try {
+        response = await ai.models.generateContent({
+          model: modelName,
+          contents: userMessage,
+        });
+        break; // If successful, exit the loop
+      } catch (e) {
+        lastError = e;
+        console.warn(`Falló el modelo ${modelName}, intentando con el siguiente...`);
+      }
+    }
+
+    if (!response) throw lastError;
     
     // Enviar la respuesta de vuelta al usuario
     await ctx.reply(response.text);
