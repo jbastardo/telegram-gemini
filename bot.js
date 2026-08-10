@@ -22,32 +22,7 @@ if (!geminiApiKey) {
 // Inicializar el cliente de Gemini (Nuevo SDK)
 const ai = new GoogleGenAI({ apiKey: geminiApiKey });
 
-let activeModel = '';
-
-// Obtener la lista de modelos permitidos para esta API Key
-async function determineAvailableModel() {
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${geminiApiKey}`);
-    const data = await res.json();
-    if (data && data.models) {
-      console.log("Modelos disponibles en tu cuenta:");
-      const generateModels = data.models.filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent"));
-      generateModels.forEach(m => console.log("- " + m.name));
-      
-      const flashModel = generateModels.find(m => m.name.includes("flash"));
-      const bestModel = flashModel || generateModels[0];
-      
-      if (bestModel) {
-        activeModel = bestModel.name.replace('models/', '');
-        console.log(`\n=== MODELO ELEGIDO: ${activeModel} ===\n`);
-      }
-    } else {
-      console.error("No se encontraron modelos en la respuesta de la API:", data);
-    }
-  } catch (err) {
-    console.error("Error consultando modelos:", err);
-  }
-}
+let activeModel = 'gemini-flash-latest';
 
 // Inicializar el bot de Telegram
 const bot = new Telegraf(telegramToken);
@@ -79,10 +54,8 @@ bot.on('text', async (ctx) => {
   }
 });
 
-determineAvailableModel().then(() => {
-  bot.launch();
-  console.log("Bot de Telegram iniciado exitosamente.");
-});
+bot.launch();
+console.log("Bot de Telegram iniciado exitosamente.");
 
 // Crear un servidor web básico para Coolify / Cloudflare Tunnel
 const app = express();
