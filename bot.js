@@ -59,7 +59,7 @@ console.log("Bot de Telegram iniciado exitosamente.");
 
 // Crear un servidor web básico para Coolify / Cloudflare Tunnel
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4040;
 
 app.get('/', (req, res) => {
   res.send('Telegram Bot (Gemini AI) is running!');
