@@ -1,5 +1,5 @@
 import { Telegraf } from 'telegraf';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 
 // Cargar variables de entorno
@@ -19,7 +19,7 @@ if (!geminiApiKey) {
 }
 
 // Inicializar el cliente de Gemini
-const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 // Inicializar el bot de Telegram
 const bot = new Telegraf(telegramToken);
@@ -40,13 +40,12 @@ bot.on('text', async (ctx) => {
   ctx.sendChatAction('typing');
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: userMessage,
-    });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(userMessage);
+    const textResponse = result.response.text();
     
     // Enviar la respuesta de vuelta al usuario
-    await ctx.reply(response.text);
+    await ctx.reply(textResponse);
   } catch (error) {
     console.error("Error al comunicarse con Gemini:", error);
     ctx.reply("Hubo un error procesando tu solicitud. Por favor intenta de nuevo más tarde.");
