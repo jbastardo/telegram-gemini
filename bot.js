@@ -65,7 +65,7 @@ app.get('/', (req, res) => {
   res.send('Telegram Bot (Gemini AI) is running!');
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor web escuchando en el puerto ${PORT}`);
 });
 
